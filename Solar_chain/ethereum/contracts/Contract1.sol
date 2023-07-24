@@ -1,6 +1,6 @@
 pragma solidity ^0.8.20;
 
-contract Maison {
+contract Campaign {
     uint256 public consommationTotale;
     uint256 public nombrePersonnes;
     uint256 public surfaceMaison;

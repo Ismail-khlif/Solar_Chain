@@ -27,7 +27,6 @@ contract Maison {
     address[] public listePartenaires;
 
 
-
    function calculerPrixInstallation(uint256 _kWClient, address _adressePartenaire, string memory _nomMarque, uint256 _prixPanneau, uint256 _productionPanneau) public pure returns (uint256) {
 
 
@@ -67,6 +66,15 @@ contract Maison {
         return (appareils[index].nomAppareil, appareils[index].puissance * appareils[index].heuresUtilisation);
     }
 
+function ajouterPartenaire(string memory _nomPartenaire, address _adressePartenaire) public {
+        Partenaire storage partenaire = partenaires[_adressePartenaire];
+        partenaire.nomPartenaire = _nomPartenaire;
+        listePartenaires.push(_adressePartenaire);
+    }
 
+    function ajouterMarquePanneau(address _adressePartenaire, string memory _nomMarque, uint256 _prix, uint256 _production) public {
+        Partenaire storage partenaire = partenaires[_adressePartenaire];
+        partenaire.marques[_nomMarque] = MarquePanneau(_prix, _production);
+    }
 
 }

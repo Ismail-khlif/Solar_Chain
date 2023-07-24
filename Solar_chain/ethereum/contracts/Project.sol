@@ -4,7 +4,6 @@ contract Campaign {
     struct CampaignInfo {
         address projectOwner;
         uint consomationYear;
-        address recipient;
         string description;
         uint limiteconsomation;
         uint joursOffre;
@@ -12,23 +11,26 @@ contract Campaign {
     
     CampaignInfo[] public campaigns;
     
-    constructor(address recipient , uint consomationYear, string memory description, uint limiteconsomation, uint joursOffre ) {
-        createCampaign(msg.sender, consomationYear, recipient, description, limiteconsomation, joursOffre);
+    constructor( uint consomationYear, string memory description, uint limiteconsomation, uint joursOffre ) {
+        createCampaign(msg.sender, consomationYear, description, limiteconsomation, joursOffre);
     }
+
     
-    function createCampaign(address projectOwner, uint consomationYear, address recipient, string memory description, uint limiteconsomation, uint joursOffre) public {
+    function createCampaign(address projectOwner, uint consomationYear, string memory description, uint limiteconsomation, uint joursOffre) public {
+        
+        require(consomationYear < limiteconsomation, "Your Limit consomation must be higher than your usual Consomation");
+        
         CampaignInfo memory newCampaign = CampaignInfo({
             projectOwner: projectOwner,
             consomationYear: consomationYear,
-            recipient: recipient,
             description: description,
             limiteconsomation: limiteconsomation,
             joursOffre : joursOffre
         });
-        campaigns.push(newCampaign);
+        campaigns.push(newCampaign); 
     }
     
-    function getCampaignCount() public view returns (uint256) {
+    function getCampaignCount() public view returns (uint) {
         return campaigns.length;
     }
 }

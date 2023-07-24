@@ -1,6 +1,7 @@
 pragma solidity ^0.8.20;
 
 
+
 contract Campaign{
 
     struct Request{
@@ -157,4 +158,5 @@ function ajouterPartenaire(string memory _nomPartenaire, address _adressePartena
     }
 
 }
+
 

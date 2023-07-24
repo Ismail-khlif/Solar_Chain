@@ -30,18 +30,19 @@ contract Campaign{
         uint256 puissance;
         uint256 heuresUtilisation;
     }
-      struct Partenaire {
-        string nomPartenaire;
-        mapping(string => MarquePanneau) marques;
-    }
-
-    struct MarquePanneau {
-        uint256 prix;
-        uint256 production;
-    }
-
-    mapping(address => Partenaire) public partenaires;
-    address[] public listePartenaires;
+     
+     struct Partenaire {	
+        string nomPartenaire;	
+        address  PartenaireAddress;	
+        mapping(string => MarquePanneau) marques;	
+    }	
+    struct MarquePanneau {	
+        uint256 prix;	
+        uint256 production;	
+    }	
+    Partenaire[] public partenaires;	
+    	
+    mapping(address => uint) public listePartenaires;
 
     struct Request{
         string description;
@@ -59,11 +60,9 @@ contract Campaign{
     PartnerOffer[] public PartnerOffers;
     Request[] public requests;
     address public manager ;
-
     mapping(address =>bool) public approvers;
     uint public approvsCount;
     uint ProjectAmount;
-
 
     modifier restricted(){
         require(msg.sender==manager);
@@ -88,12 +87,12 @@ contract Campaign{
         return campaigns.length;
     }
 
-
     function createOfferPAr(string memory description) public {
         PartnerOffer storage newOffre = PartnerOffers.push();
         newOffre.description = description;
         newOffre.choixPart = false;
     }
+
     function createRequest(string memory description, uint256 value, address recipient) public restricted {
         Request storage newRequest = requests.push();
         newRequest.description = description;
@@ -103,16 +102,11 @@ contract Campaign{
         newRequest.approvalCount = 0;
     }
 
-
-
     function contribute() public payable returns(uint){
         require(msg.value>0);
         approvers[msg.sender]=true;
         approvsCount++;
-        uint percentage = msg.value; //percentage of the amount for the project
-        return(
-             percentage
-        );
+        return msg.value;
 
     }
     function approveRequest(uint index)public {
@@ -171,15 +165,26 @@ contract Campaign{
         return (appareils[index].nomAppareil, appareils[index].puissance * appareils[index].heuresUtilisation);
     }
 
-    function ajouterPartenaire(string memory _nomPartenaire, address _adressePartenaire) public {
-        Partenaire storage partenaire = partenaires[_adressePartenaire];
-        partenaire.nomPartenaire = _nomPartenaire;
-        listePartenaires.push(_adressePartenaire);
+    function ajouterPartenaire(string memory _nomPartenaire) public {	
+        Partenaire storage partenaire = partenaires.push();	
+        partenaire.nomPartenaire = _nomPartenaire;	
+        partenaire.PartenaireAddress = msg.sender;	
+        uint index = partenaires.length - 1;	
+        listePartenaires[msg.sender] = index;	
     }
 
-    function ajouterMarquePanneau(address _adressePartenaire, string memory _nomMarque, uint256 _prix, uint256 _production) public {
-        Partenaire storage partenaire = partenaires[_adressePartenaire];
-        partenaire.marques[_nomMarque] = MarquePanneau(_prix, _production);
+    function ajouterMarquePanneau( string memory _nomMarque, uint256 _prix, uint256 _production) public {	
+        Partenaire storage partenaire = partenaires[listePartenaires[msg.sender]];	
+        partenaire.marques[_nomMarque] = MarquePanneau(_prix, _production);	
     }
+
+    function getMarquePanneauForPartenaire( string memory _nomMarque) public view returns (uint256 prix, uint256 production) {	
+        uint index = listePartenaires[msg.sender];	
+        require(index < partenaires.length, "Invalid partner address.");	
+        Partenaire storage partenaire = partenaires[index];	
+        MarquePanneau storage marque = partenaire.marques[_nomMarque];	
+        return (marque.prix, marque.production);	
+    }	
+
 
 }

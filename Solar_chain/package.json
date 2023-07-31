@@ -9,6 +9,8 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@mui/icons-material": "^5.14.1",
+    "@mui/material": "^5.14.2",
     "@truffle/hdwallet-provider": "^1.5.1",
     "fs-extra": "^10.0.0",
     "ganache-cli": "^6.12.2",

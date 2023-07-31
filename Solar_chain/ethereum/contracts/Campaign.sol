@@ -157,4 +157,6 @@ Partenaire storage partenaire = partenaires[_adressePartenaire];
 partenaire.marques[_nomMarque] = MarquePanneau(_prix, _production);
 }
 
+
 }
+

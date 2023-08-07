@@ -4,6 +4,12 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Ajoutez la classe pour l'arrière-plan noir */
+.bg-black {
+    background-color: #000000 !important;
+}
+
+
 .linear-gradient {
     background: linear-gradient(
             179.14deg,

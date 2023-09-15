@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0
-pragma solidity ^0.8.19;
+pragma solidity ^0.8.20;
 
 contract Campaign{
 
@@ -10,14 +10,15 @@ contract Campaign{
         uint limiteconsomation;
         uint joursOffre;
     }
-    
-    CampaignInfo[] public campaigns;
-    
-    //constructor( uint consomationYear, string memory description, uint limiteconsomation, uint joursOffre ) {
-    //    createCampaign(msg.sender, consomationYear, description, limiteconsomation, joursOffre);
-    //    manager= msg.sender;
-    //}
+   address[] public  deployedCamapigns;
 
+    CampaignInfo[] public campaigns;
+    /*
+    constructor( uint consomationYear, string memory description, uint limiteconsomation, uint joursOffre ) {
+        createCampaign(msg.sender, consomationYear, description, limiteconsomation, joursOffre);
+        manager= msg.sender;
+    }
+*/
     uint256 public consommationTotale;
     uint256 public nombrePersonnes;
     uint256 public surfaceMaison;
@@ -69,20 +70,25 @@ contract Campaign{
         _;
     }
 
-    function createCampaign(address projectOwner, uint consomationYear, string memory description, uint limiteconsomation, uint joursOffre) public {
+    function createCampaign( uint consomationYear, string memory description, uint limiteconsomation, uint joursOffre) public {
         
         require(consomationYear < limiteconsomation, "Your Limit consomation must be higher than your usual Consomation");
         
         CampaignInfo memory newCampaign = CampaignInfo({
-            projectOwner: projectOwner,
+            projectOwner: msg.sender,
             consomationYear: consomationYear,
             description: description,
             limiteconsomation: limiteconsomation,
             joursOffre : joursOffre
         });
         campaigns.push(newCampaign); 
+        deployedCamapigns.push(newCampaign.projectOwner);
     }
     
+     function getdeployedCampaign() public view returns(address[] memory) {
+    return deployedCamapigns;
+}
+
     function getCampaignCount() public view returns (uint) {
         return campaigns.length;
     }
@@ -124,7 +130,7 @@ contract Campaign{
         require(!request.complete);
         require(request.approvalCount > (approvsCount / 2));
 
-        address payable recipient = payable(request.recipient); // Convert to address payable
+        address payable recipient = payable(address(request.recipient)); // Convert to address payable
         recipient.transfer(request.value);
 
         request.complete = true;
